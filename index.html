@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/c76c5a09b4.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #243c6e;
+            color: aliceblue;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        input {
+            padding: 5px;
+            font-size: 1.5rem;
+            border-radius: 5px;
+            border: none;
+            box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-family: 'Abril Fatface', cursive;
+            color: rgb(222, 222, 45);
+        }
+
+        p {
+            font-size: 1.5rem;
+            margin: 10px;
+        }
+
+        .container {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        form button {
+            background-color: #212121;
+            width: 50%;
+            color: white;
+            padding: 8px 0;
+            font-size: 1.3rem;
+            border: 1px solid black;
+            box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+        }
+
+        .result {
+            margin-top: 20px;
+        }
+
+        #btn {
+            font-size: 1.2rem;
+            display: none;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            font-family: 'Special Elite', cursive;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Guess the Number! <i class="fa-solid fa-face-smile-wink "></i></h1>
+
+        <form action="">
+            <input type="text" id="inp">
+
+            <button type="submit"> Try Ur Guess </button>
+        </form>
+        <div class="result">
+
+            <p>Previous guess: <span class="guess"></span></p>
+            <p>Guesses remaining: <span class="remaining">10</span></p>
+            <h2 id="HiorLow"></h2>
+        </div>
+
+        <button id="btn" onclick="startOver()">Start over</button>
+    </div>
+
+
+    <script>
+
+        let num = Math.floor(Math.random() * 100 + 1);
+        console.log(num)
+        let resultOver = document.querySelector('.result');
+        let startOverBtn = document.getElementById("btn")
+        let previous = [];
+        let guessLeft = 10;
+        let myInp = document.getElementById("inp");
+
+        let suggeation = document.getElementById("HiorLow");
+        document.querySelector('form').addEventListener('submit', submitGuess);
+
+
+
+        function submitGuess(e) {
+
+            let diff = Math.abs(num - myInp.value);
+
+            console.log(diff)
+            if (typeof (myInp.value) != Number) {
+                suggeation.innerHTML = "Not a Number";
+
+                e.preventDefault();
+            }
+
+            if (myInp.value > 100) {
+                suggeation.innerHTML = "Enter between 1 to 100";
+                e.preventDefault();
+            }
+
+            if (myInp.value < 1) {
+                suggeation.innerHTML = "Enter between 1 to 100";
+                e.preventDefault();
+
+            }
+
+
+
+            if (myInp.value < num && myInp.value > 0) {
+
+                if (diff < 7 && myInp.value < num) {
+                    closeEnoughIncrease();
+                }
+                else {
+                    suggeation.innerHTML = "Number is TOOO Low!";
+                    document.querySelector(".guess").innerHTML += `${myInp.value}   `;
+                    guessLeft--;
+                    document.querySelector(".remaining").innerHTML = guessLeft;
+                    myInp.value = "";
+                    e.preventDefault();
+                }
+            }
+            
+            if (myInp.value > num && myInp.value < 100) {
+                if (diff < 7 && myInp.value > num) {
+                    closeEnoughDecrease();
+                }
+                else {
+                    suggeation.innerHTML = "Number is TOOO High!";
+                    previous.push(myInp.value);
+                    document.querySelector(".guess").innerHTML += `${myInp.value}   `;
+                    guessLeft--;
+                    document.querySelector(".remaining").innerHTML = guessLeft
+                    myInp.value = "";
+                    e.preventDefault();
+                }
+            }
+
+            if (guessLeft == 0) {
+                //    resultOver.style.display = "none";
+                startOverBtn.style.display = "block"
+                myInp.disabled = true;
+                suggeation.innerHTML = "Oops!!Game over!";
+                suggeation.style.color ="yellow";
+                e.preventDefault();
+            }
+
+
+            if (num == myInp.value) {
+                suggeation.innerHTML = "Yes! You Guessed it!";
+                suggeation.style.color ="yellow";
+                myInp.disabled = true;
+                startOverBtn.style.display = "block"
+                guessLeft--;
+                document.querySelector(".remaining").innerHTML = guessLeft
+                e.preventDefault();
+
+            }
+        
+        }
+
+
+        function closeEnoughIncrease() {
+
+
+
+            if (guessLeft != 0) {
+                suggeation.innerHTML = `Close Enough!! Increase little Bit! `;
+                document.querySelector(".guess").innerHTML += `${myInp.value}   `;
+                guessLeft--;
+                document.querySelector(".remaining").innerHTML = guessLeft;
+                myInp.value = "";
+            }
+
+
+            if (guessLeft == 0) {
+                //    resultOver.style.display = "none";
+                startOverBtn.style.display = "block"
+                myInp.disabled = true;
+                suggeation.innerHTML = "Game over!";
+
+            }
+            e.preventDefault();
+        }
+
+
+        function closeEnoughDecrease() {
+            if (guessLeft != 0) {
+                suggeation.innerHTML = "No!! Decrease little Bit!";
+                document.querySelector(".guess").innerHTML += `${myInp.value}   `;
+                guessLeft--;
+                document.querySelector(".remaining").innerHTML = guessLeft
+                myInp.value = "";
+            }
+            if (guessLeft == 0) {
+                //    resultOver.style.display = "none";
+                startOverBtn.style.display = "block"
+                myInp.disabled = true;
+                suggeation.innerHTML = "Game over!";
+
+            }
+
+
+
+
+        }
+        function startOver() {
+            location.reload();
+        }
+    </script>
+</body>
+
+</html>
